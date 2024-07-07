@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     android:gravity="bottom">
     <TextView
-        android:textSize="8dp"
+        android:textSize="8sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mapkit version: " />
+        android:text="@string/mapkit_version" />
     <TextView
         android:id="@+id/mapkit_version_value"
         android:textSize="8dp"

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Markers</string>
+    <string name="mapkit_version">"Версия карт: "</string>
+    <string name="access_geo_prohibited">Доступ к геолокации запрещен.</string>
+    <string name="move_to_location">Перемещаемся в точку вашей локации.</string>
+</resources>
