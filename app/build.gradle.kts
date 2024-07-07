@@ -6,6 +6,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id ("org.jetbrains.kotlin.kapt")
+
 }
 
 android {
@@ -46,7 +48,6 @@ android {
 
             }
             val key: String = getLocalProperty("MAPKIT_API_KEY").toString()
-//            println(key)
             buildConfigField("String", "MAPKIT_API_KEY", "\"$key\"")
 
         }
@@ -62,6 +63,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -70,6 +72,12 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation (libs.maps.mobile)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt ("androidx.room:room-compiler:$room_version")
+    implementation (libs.mapstruct)
+    annotationProcessor (libs.mapstruct.processor)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -93,10 +93,10 @@ class MapsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMapsBinding.inflate(inflater, container, false)
+        binding = FragmentMapsBinding.inflate(inflater)
         MapKitFactory.initialize(requireContext())
 
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
