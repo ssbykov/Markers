@@ -29,6 +29,7 @@ import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.BuildConfig
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
+import ru.netology.markers.dto.MapObject
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
@@ -37,9 +38,9 @@ class MapsFragment : Fragment() {
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
-//    private val viewModel: MapsVeiwModel by viewModels(
-//        ownerProducer = ::requireParentFragment
-//    )
+    private val viewModel: MapsVeiwModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
 
     private val locationListener = object : LocationListener {
         override fun onLocationUpdated(p0: Location) {
@@ -84,6 +85,13 @@ class MapsFragment : Fragment() {
                 setTextStyle(TEXT_STYLE)
                 userData = "Важное место"
                 setText("Важное место")
+                val mapObject = MapObject(
+                    latitude = point.latitude,
+                    longitude = point.longitude,
+                    name = "Важное место",
+                    description = "Описание важного места"
+                )
+                viewModel.save(mapObject)
             }
             placemarkObject.addTapListener(placemarkTapListener)
         }
