@@ -8,10 +8,5 @@ import ru.netology.markers.BuildConfig
 
 
 class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
-    var mapKitFactory: Unit
 
-    init {
-        MapKitFactory.setApiKey("YOUR_API_KEY")
-        mapKitFactory = MapKitFactory.initialize(application)
-    }
 }
