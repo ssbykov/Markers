@@ -9,5 +9,14 @@
         android:id="@+id/mapsFragment"
         android:name="ru.netology.markers.activity.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_mapsFragment_to_newMapObject"
+            app:destination="@id/newMapObject" />
+    </fragment>
+    <fragment
+        android:id="@+id/newMapObject"
+        android:name="ru.netology.markers.activity.NewMapObject"
+        android:label="fragment_new_map_object"
+        tools:layout="@layout/fragment_new_map_object" />
 </navigation>

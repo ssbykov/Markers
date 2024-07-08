@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
@@ -32,7 +33,11 @@ import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
+private const val LATITUDE = "latitude"
+private const val LONGITUDE = "longitude"
+
 class MapsFragment : Fragment() {
+
 
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
@@ -70,25 +75,36 @@ class MapsFragment : Fragment() {
         }
 
         override fun onMapLongTap(map: Map, point: Point) {
-            val imageProvider =
-                ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
-            val placemarkObject = map.mapObjects.addPlacemark().apply {
-                geometry = point
-                setIcon(imageProvider)
-                setTextStyle(TEXT_STYLE)
-                userData = "Важное место"
-                setText("Важное место")
-                val mapObject = MapObject(
-                    latitude = point.latitude,
-                    longitude = point.longitude,
-                    name = "Важное место",
-                    description = "Описание важного места"
-                )
-                viewModel.save(mapObject)
-            }
-            placemarkObject.addTapListener(placemarkTapListener)
+            findNavController().navigate(
+                R.id.action_mapsFragment_to_newMapObject,
+                Bundle().apply {
+                    putDouble(LATITUDE, point.latitude)
+                    putDouble(LONGITUDE, point.longitude)
+                }
+            )
         }
     }
+//            val imageProvider =
+//                ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
+//            val placemarkObject = map.mapObjects.addPlacemark().apply {
+//                geometry = point
+//                setIcon(imageProvider)
+//                setTextStyle(TEXT_STYLE)
+//                userData = "Важное место"
+//                setText("Важное место")
+//                val mapObject = MapObject(
+//                    latitude = point.latitude,
+//                    longitude = point.longitude,
+//                    name = "Важное место",
+//                    description = "Описание важного места"
+//                )
+
+//                viewModel.save(mapObject)
+//            }
+
+//            placemarkObject.addTapListener(placemarkTapListener)
+//    }
+//}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
