@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
@@ -31,6 +28,7 @@ import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.dto.MapObject
+import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
@@ -46,9 +44,7 @@ class MapsFragment : Fragment() {
             viewModel.setCurrtntLocation(p0.position)
         }
 
-        override fun onLocationStatusUpdated(p0: LocationStatus) {
-            requireContext().showToast(getString(R.string.move_to_location))
-        }
+        override fun onLocationStatusUpdated(p0: LocationStatus) {}
 
     }
 
@@ -100,7 +96,7 @@ class MapsFragment : Fragment() {
         MapKitFactory.initialize(requireContext())
 
         viewModel.currtntLocation.observe(viewLifecycleOwner) { position ->
-            move(position)
+            move(position, getString(R.string.move_to_location))
         }
 
         return binding.root
@@ -136,8 +132,6 @@ class MapsFragment : Fragment() {
 
 
     companion object {
-        private val POINT = Point(55.704473, 37.624700)
-        private val POSITION = CameraPosition(POINT, 17.0f, 150.0f, 30.0f)
         private val TEXT_STYLE = TextStyle().apply {
             placement = TextStyle.Placement.RIGHT
         }
@@ -166,8 +160,9 @@ class MapsFragment : Fragment() {
                     when (event) {
                         BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION,
                         BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT -> {
-                            viewModel.currtntLocation.observe(viewLifecycleOwner) { move(it) }
-                            requireContext().showToast(getString(R.string.go_to_netology))
+                            viewModel.currtntLocation.observe(viewLifecycleOwner) {
+                                move(it, getString(R.string.go_to_netology))
+                            }
                         }
 
                         else -> {}
@@ -178,12 +173,17 @@ class MapsFragment : Fragment() {
         }
     }
 
-    private fun move(point: Point) {
+    private fun move(point: Point, message: String = "") {
+        if (compareLocations(map.cameraPosition, point)) return
+
         map.move(
             CameraPosition(point, 17.0f, 150.0f, 30.0f),
             Animation(Animation.Type.SMOOTH, 5F),
             null
         )
+        if (message.isNotBlank()) {
+            requireContext().showToast(message)
+        }
     }
 
     private fun checkPermission(): Boolean {
