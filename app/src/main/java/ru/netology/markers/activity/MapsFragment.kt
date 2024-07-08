@@ -9,7 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
@@ -37,7 +37,9 @@ class MapsFragment : Fragment() {
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
-    private val viewModel: MapsVeiwModel by activityViewModels()
+    private val viewModel: MapsVeiwModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
 
     private val locationListener = object : LocationListener {
         override fun onLocationUpdated(p0: Location) {

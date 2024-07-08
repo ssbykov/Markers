@@ -6,4 +6,8 @@
     <string name="ok" translatable="false">OK</string>
     <string name="check_your_location">Determine your location.</string>
     <string name="go_to_netology">Go to Netology.</string>
+    <string name="name">Name</string>
+    <string name="required">Required</string>
+    <string name="descriptin">Descriptin</string>
+    <string name="save">Save</string>
 </resources>
