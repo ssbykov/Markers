@@ -4,4 +4,6 @@
     <string name="mapkit_version">"Версия карт: "</string>
     <string name="access_geo_prohibited">Доступ к геолокации запрещен.</string>
     <string name="move_to_location">Перемещаемся в точку вашей локации.</string>
+    <string name="check_your_location">Определяю место нахождения.</string>
+    <string name="go_to_netology">Перемещаемся в Нетологию.</string>
 </resources>

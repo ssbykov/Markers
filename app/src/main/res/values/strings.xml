@@ -3,4 +3,7 @@
     <string name="mapkit_version">Mapkit version:</string>
     <string name="move_to_location">Moving to the point of your location.</string>
     <string name="access_geo_prohibited">Access to geolocation is prohibited.</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="check_your_location">Determine your location.</string>
+    <string name="go_to_netology">Go to Netology.</string>
 </resources>

@@ -12,6 +12,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -105,25 +107,25 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapView = requireActivity().findViewById(R.id.mapview)
-        val mapkitVersionView = requireActivity().findViewById<LinearLayout>(R.id.mapkit_version)
-        val mapkitVersionTextView =
-            mapkitVersionView.findViewById<TextView>(R.id.mapkit_version_value)
+        mapView = binding.mapview
+        val mapkitVersionTextView = binding.mapkitVersion.mapkitVersionValue
         mapkitVersionTextView.text = MapKitFactory.getInstance().version
 
-        checkPermission()
 
         map = mapView.mapWindow.map
-        map.apply {
-            addInputListener(inputListener)
-            move(POSITION, Animation(Animation.Type.SMOOTH, 5F), null)
+        map.addInputListener(inputListener)
+
+        binding.location.setOnClickListener {
+            setLocation()
         }
+
     }
 
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView.onStart()
+        setLocation()
     }
 
     override fun onStop() {
@@ -144,25 +146,60 @@ class MapsFragment : Fragment() {
         fun newInstance() = MapsFragment()
     }
 
-    private fun checkPermission() {
+    private fun setLocation() {
+        if (checkPermission()) {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.check_your_location),
+                Snackbar.LENGTH_SHORT
+            ).show()
+        } else {
+            val snackbar = Snackbar.make(
+                binding.root,
+                getString(R.string.access_geo_prohibited),
+                Snackbar.LENGTH_SHORT
+            )
+            snackbar.setAction(getString(R.string.ok)) {
+                snackbar.dismiss()
+            }.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    when (event) {
+                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION,
+                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT-> {
+                            map.move(POSITION, Animation(Animation.Type.SMOOTH, 5F), null)
+                            requireContext().showToast(getString(R.string.go_to_netology))
+                        }
+
+                        else -> {}
+                    }
+                }
+            })
+            snackbar.show()
+        }
+    }
+
+    private fun checkPermission(): Boolean {
         val permissions = android.Manifest.permission.ACCESS_FINE_LOCATION
-        when {
+        return when {
             ContextCompat.checkSelfPermission(
                 requireContext(),
                 permissions
             ) == PackageManager.PERMISSION_GRANTED -> {
                 MapKitFactory.getInstance().createLocationManager()
                     .requestSingleUpdate(locationListener)
+                true
+
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 requireActivity(), permissions
             ) -> {
-                requireContext().showToast(getString(R.string.access_geo_prohibited))
+                false
             }
 
             else -> {
                 requestPermissionLauncher.launch(permissions)
+                true
             }
         }
     }
