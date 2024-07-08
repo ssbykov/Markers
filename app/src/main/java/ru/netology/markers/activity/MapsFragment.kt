@@ -2,16 +2,15 @@ package ru.netology.markers.activity
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -26,7 +25,6 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
-import ru.netology.markers.BuildConfig
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.dto.MapObject
@@ -38,9 +36,7 @@ class MapsFragment : Fragment() {
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
-    private val viewModel: MapsVeiwModel by viewModels(
-        ownerProducer = ::requireParentFragment
-    )
+    private val viewModel: MapsVeiwModel by viewModels()
 
     private val locationListener = object : LocationListener {
         override fun onLocationUpdated(p0: Location) {
@@ -123,6 +119,7 @@ class MapsFragment : Fragment() {
             move(POSITION, Animation(Animation.Type.SMOOTH, 5F), null)
         }
     }
+
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()

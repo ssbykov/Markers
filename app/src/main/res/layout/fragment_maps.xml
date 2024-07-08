@@ -14,4 +14,10 @@
         android:id="@+id/mapkit_version"
         layout="@layout/mapkit_version_layout" />
 
+    <Button
+        android:id="@+id/location"
+        android:text="location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </FrameLayout>
