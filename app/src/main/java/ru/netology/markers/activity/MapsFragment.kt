@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -38,15 +39,11 @@ class MapsFragment : Fragment() {
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
-    private val viewModel: MapsVeiwModel by viewModels()
+    private val viewModel: MapsVeiwModel by activityViewModels()
 
     private val locationListener = object : LocationListener {
         override fun onLocationUpdated(p0: Location) {
-            map.move(
-                CameraPosition(p0.position, 17.0f, 150.0f, 30.0f),
-                Animation(Animation.Type.SMOOTH, 5F),
-                null
-            )
+            viewModel.setCurrtntLocation(p0.position)
         }
 
         override fun onLocationStatusUpdated(p0: LocationStatus) {
@@ -102,6 +99,10 @@ class MapsFragment : Fragment() {
         binding = FragmentMapsBinding.inflate(inflater)
         MapKitFactory.initialize(requireContext())
 
+        viewModel.currtntLocation.observe(viewLifecycleOwner) { position ->
+            move(position)
+        }
+
         return binding.root
     }
 
@@ -125,7 +126,6 @@ class MapsFragment : Fragment() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView.onStart()
-        setLocation()
     }
 
     override fun onStop() {
@@ -165,8 +165,8 @@ class MapsFragment : Fragment() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                     when (event) {
                         BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION,
-                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT-> {
-                            map.move(POSITION, Animation(Animation.Type.SMOOTH, 5F), null)
+                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT -> {
+                            viewModel.currtntLocation.observe(viewLifecycleOwner) { move(it) }
                             requireContext().showToast(getString(R.string.go_to_netology))
                         }
 
@@ -176,6 +176,14 @@ class MapsFragment : Fragment() {
             })
             snackbar.show()
         }
+    }
+
+    private fun move(point: Point) {
+        map.move(
+            CameraPosition(point, 17.0f, 150.0f, 30.0f),
+            Animation(Animation.Type.SMOOTH, 5F),
+            null
+        )
     }
 
     private fun checkPermission(): Boolean {
