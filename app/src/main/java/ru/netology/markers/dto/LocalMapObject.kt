@@ -1,7 +1,7 @@
 package ru.netology.markers.dto
 
 
-data class MapObject(
+data class LocalMapObject(
     val id: Long = 0,
     val latitude: Double,
     val longitude: Double,

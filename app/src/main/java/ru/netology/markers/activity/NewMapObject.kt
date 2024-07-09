@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentNewMapObjectBinding
-import ru.netology.markers.dto.MapObject
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
 

@@ -1,11 +1,10 @@
 package ru.netology.markers.repository
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import ru.netology.markers.dao.MapsDao
-import ru.netology.markers.dto.MapObject
+import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.dto.MapObjectMapperImpl
 import ru.netology.markers.dto.toDto
 import ru.netology.markers.entity.MapObjectEntity
@@ -15,7 +14,7 @@ class MapObjectRepoImpl(private val dao: MapsDao) : MapObjectRepo {
         .map(List<MapObjectEntity>::toDto)
         .flowOn(Dispatchers.Default)
 
-    override suspend fun getById(id: Long): MapObject? {
+    override fun getById(id: Long): LocalMapObject? {
         val mapObject = dao.getById(id)
         return if (mapObject != null) {
             return MapObjectMapperImpl.toDto(mapObject)
@@ -26,7 +25,7 @@ class MapObjectRepoImpl(private val dao: MapsDao) : MapObjectRepo {
         dao.removeById(id)
     }
 
-    override suspend fun save(mapObject: MapObject) {
-        dao.insert(MapObjectMapperImpl.fromDto(mapObject))
+    override suspend fun save(localMapObject: LocalMapObject) {
+        dao.insert(MapObjectMapperImpl.fromDto(localMapObject))
     }
 }

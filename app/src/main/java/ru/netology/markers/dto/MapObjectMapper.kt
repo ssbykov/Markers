@@ -4,26 +4,26 @@ import org.mapstruct.Mapper
 import ru.netology.markers.entity.MapObjectEntity
 
 
-fun List<MapObjectEntity>.toDto(): List<MapObject> = map(MapObjectMapperImpl::toDto)
+fun List<MapObjectEntity>.toDto(): List<LocalMapObject> = map(MapObjectMapperImpl::toDto)
 
-fun List<MapObject>.toEntity(): List<MapObjectEntity> = map(MapObjectMapperImpl::fromDto)
+fun List<LocalMapObject>.toEntity(): List<MapObjectEntity> = map(MapObjectMapperImpl::fromDto)
 
 @Mapper
 interface MapObjectMapper {
-    fun fromDto(mapObject: MapObject): MapObjectEntity
-    fun toDto(mapObjectEntity: MapObjectEntity): MapObject
+    fun fromDto(localMapObject: LocalMapObject): MapObjectEntity
+    fun toDto(mapObjectEntity: MapObjectEntity): LocalMapObject
 }
 
 object MapObjectMapperImpl : MapObjectMapper {
-    override fun fromDto(mapObject: MapObject) = MapObjectEntity(
-        id = mapObject.id,
-        latitude = mapObject.latitude,
-        longitude = mapObject.longitude,
-        name = mapObject.name,
-        description = mapObject.description,
+    override fun fromDto(localMapObject: LocalMapObject) = MapObjectEntity(
+        id = localMapObject.id,
+        latitude = localMapObject.latitude,
+        longitude = localMapObject.longitude,
+        name = localMapObject.name,
+        description = localMapObject.description,
     )
 
-    override fun toDto(mapObjectEntity: MapObjectEntity) = MapObject(
+    override fun toDto(mapObjectEntity: MapObjectEntity) = LocalMapObject(
         id = mapObjectEntity.id,
         latitude = mapObjectEntity.latitude,
         longitude = mapObjectEntity.longitude,

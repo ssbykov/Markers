@@ -1,7 +1,6 @@
 package ru.netology.markers.activity
 
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
@@ -25,13 +23,15 @@ import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObject
+import com.yandex.mapkit.map.MapObjectDragListener
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
-import ru.netology.markers.dto.MapObject
+import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.utils.DilogActions
 import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showMapObjectDilog
@@ -50,8 +50,8 @@ class MapsFragment : Fragment() {
     )
 
     private val locationListener = object : LocationListener {
-        override fun onLocationUpdated(p0: Location) {
-            viewModel.setCurrtntLocation(p0.position)
+        override fun onLocationUpdated(location: Location) {
+            viewModel.setCurrtntLocation(location.position)
         }
 
         override fun onLocationStatusUpdated(p0: LocationStatus) {}
@@ -68,25 +68,46 @@ class MapsFragment : Fragment() {
 
 
     private val placemarkTapListener = MapObjectTapListener { mapObject, _ ->
-        viewModel.data.observe(viewLifecycleOwner) { objects ->
-            val outMapObject = objects.find { it.id == mapObject.userData }
-            if (outMapObject == null) return@observe
+        viewModel.data.observe(viewLifecycleOwner) { localMapObjects ->
+            val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
+            if (selectedMapObject == null) return@observe
             val dilogActions = object : DilogActions {
-                override fun edit(mapObject: MapObject) {
-                    viewModel.edit(outMapObject)
+                override fun edit(localMapObject: LocalMapObject) {
+                    viewModel.edit(selectedMapObject)
                     findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
                 }
-                override fun remove(id: Long) = viewModel.removeById(outMapObject.id)
+
+                override fun remove(id: Long) = viewModel.removeById(selectedMapObject.id)
             }
-            requireContext().showMapObjectDilog(outMapObject, dilogActions)
+            requireContext().showMapObjectDilog(selectedMapObject, dilogActions)
         }
         true
     }
 
-    val inputListener = object : InputListener {
-        override fun onMapTap(map: Map, point: Point) {
+    private val mapObjectDragListener = object : MapObjectDragListener {
+        var point = Point()
+        override fun onMapObjectDragStart(mapObject: MapObject) {}
 
+        override fun onMapObjectDrag(mapObject: MapObject, p1: Point) {
+            point = p1
         }
+
+        override fun onMapObjectDragEnd(mapObject: MapObject) {
+            val selectedMapObject = viewModel.getById(mapObject.userData as Long)
+            if (selectedMapObject == null) return
+            val localMapObject = selectedMapObject.copy(
+                id = selectedMapObject.id,
+                latitude = point.latitude,
+                longitude = point.longitude
+            )
+            viewModel.save(localMapObject)
+        }
+
+
+    }
+
+    val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {}
 
         override fun onMapLongTap(map: Map, point: Point) {
             val mapObject = empty.copy(latitude = point.latitude, longitude = point.longitude)
@@ -113,12 +134,13 @@ class MapsFragment : Fragment() {
                     setTextStyle(TEXT_STYLE)
                     userData = it.id
                     setText(it.name)
+                    isDraggable = true
+                    setDragListener(mapObjectDragListener)
                 }
 
                 placemarkObject.addTapListener(placemarkTapListener)
             }
         }
-
         viewModel.currtntLocation.observe(viewLifecycleOwner) { position ->
             move(position, getString(R.string.move_to_location))
         }

@@ -11,10 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.markers.db.AppDb
-import ru.netology.markers.dto.MapObject
+import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.repository.MapObjectRepoImpl
 
-val empty = MapObject(
+val empty = LocalMapObject(
     id = 0,
     name = "",
     latitude = 0.0,
@@ -31,8 +31,8 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         objects.map { it.copy() }
     }.asLiveData(Dispatchers.Default)
 
-    private val _edited = MutableLiveData<MapObject>(empty)
-    val edited: LiveData<MapObject>
+    private val _edited = MutableLiveData<LocalMapObject>(empty)
+    val edited: LiveData<LocalMapObject>
         get() = _edited
 
     private val _currtntLocation = MutableLiveData<Point>(POINT)
@@ -40,9 +40,9 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
     val currtntLocation: LiveData<Point>
         get() = _currtntLocation
 
-    fun save(mapObject: MapObject) {
+    fun save(localMapObject: LocalMapObject) {
         viewModelScope.launch {
-            repository.save(mapObject)
+            repository.save(localMapObject)
         }
         _edited.value = empty
     }
@@ -53,8 +53,11 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun edit(mapObject: MapObject) {
-        _edited.value = mapObject
+    fun getById(id: Long) = repository.getById(id)
+
+
+    fun edit(localMapObject: LocalMapObject) {
+        _edited.value = localMapObject
     }
 
     fun setCurrtntLocation(point: Point) {

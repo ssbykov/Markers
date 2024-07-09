@@ -7,7 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import ru.netology.markers.R
-import ru.netology.markers.dto.MapObject
+import ru.netology.markers.dto.LocalMapObject
 import kotlin.math.round
 
 fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
@@ -15,16 +15,16 @@ fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 interface DilogActions {
-    fun edit(mapObject: MapObject)
+    fun edit(localMapObject: LocalMapObject)
     fun remove(id: Long)
 }
 
-fun Context.showMapObjectDilog(mapObject: MapObject, dilogActions: DilogActions) {
-    val description = if (mapObject.description != "") {
-        mapObject.description
+fun Context.showMapObjectDilog(localMapObject: LocalMapObject, dilogActions: DilogActions) {
+    val description = if (localMapObject.description != "") {
+        localMapObject.description
     } else "Описание отсутствует"
     MaterialAlertDialogBuilder(this)
-        .setTitle(mapObject.name)
+        .setTitle(localMapObject.name)
         .setMessage(description)
         .setIcon(R.drawable.ic_dollar_pin)
         .setNegativeButtonIcon(
@@ -34,7 +34,7 @@ fun Context.showMapObjectDilog(mapObject: MapObject, dilogActions: DilogActions)
             )
         )
         .setNegativeButton(null) { dialog, _ ->
-            dilogActions.remove(mapObject.id)
+            dilogActions.remove(localMapObject.id)
             dialog.dismiss()
         }
         .setPositiveButtonIcon(
@@ -44,7 +44,7 @@ fun Context.showMapObjectDilog(mapObject: MapObject, dilogActions: DilogActions)
             )
         )
         .setPositiveButton(null) { dialog, _ ->
-            dilogActions.edit(mapObject)
+            dilogActions.edit(localMapObject)
             dialog.dismiss()
         }
         .setNeutralButtonIcon(
