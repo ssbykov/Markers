@@ -12,4 +12,5 @@
     <string name="save">Сохранить</string>
     <string name="no_description">Описание отсутствует</string>
     <string name="delete">Удалить</string>
+    <string name="my_objects">Мои объекты</string>
 </resources>

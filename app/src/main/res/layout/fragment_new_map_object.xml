@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".activity.NewMapObject">
+    tools:context=".activity.NewMapObjectFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameLayout"

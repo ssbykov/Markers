@@ -13,10 +13,18 @@
         <action
             android:id="@+id/action_mapsFragment_to_newMapObject"
             app:destination="@id/newMapObject" />
+        <action
+            android:id="@+id/action_mapsFragment_to_feedObjects"
+            app:destination="@id/feedObjects" />
     </fragment>
     <fragment
         android:id="@+id/newMapObject"
-        android:name="ru.netology.markers.activity.NewMapObject"
+        android:name="ru.netology.markers.activity.NewMapObjectFragment"
         android:label="fragment_new_map_object"
         tools:layout="@layout/fragment_new_map_object" />
+    <fragment
+        android:id="@+id/feedObjects"
+        android:name="ru.netology.markers.activity.FeedObjectsFragment"
+        android:label="fragment_feed_objects"
+        tools:layout="@layout/fragment_feed_objects" />
 </navigation>

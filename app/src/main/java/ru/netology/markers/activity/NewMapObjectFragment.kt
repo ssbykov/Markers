@@ -12,7 +12,7 @@ import ru.netology.markers.databinding.FragmentNewMapObjectBinding
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
 
-class NewMapObject : Fragment() {
+class NewMapObjectFragment : Fragment() {
 
     private lateinit var binding: FragmentNewMapObjectBinding
 
@@ -58,6 +58,6 @@ class NewMapObject : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = NewMapObject()
+        fun newInstance() = NewMapObjectFragment()
     }
 }
