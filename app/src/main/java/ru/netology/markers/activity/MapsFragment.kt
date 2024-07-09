@@ -37,9 +37,7 @@ import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showMapObjectDilog
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
-
-private const val LATITUDE = "latitude"
-private const val LONGITUDE = "longitude"
+import ru.netology.markers.viewmodel.empty
 
 class MapsFragment : Fragment() {
 
@@ -74,7 +72,10 @@ class MapsFragment : Fragment() {
             val outMapObject = objects.find { it.id == mapObject.userData }
             if (outMapObject == null) return@observe
             val dilogActions = object : DilogActions {
-                override fun edit(id: Long) {}
+                override fun edit(mapObject: MapObject) {
+                    viewModel.edit(outMapObject)
+                    findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
+                }
                 override fun remove(id: Long) = viewModel.removeById(outMapObject.id)
             }
             requireContext().showMapObjectDilog(outMapObject, dilogActions)
@@ -88,13 +89,9 @@ class MapsFragment : Fragment() {
         }
 
         override fun onMapLongTap(map: Map, point: Point) {
-            findNavController().navigate(
-                R.id.action_mapsFragment_to_newMapObject,
-                Bundle().apply {
-                    putDouble(LATITUDE, point.latitude)
-                    putDouble(LONGITUDE, point.longitude)
-                }
-            )
+            val mapObject = empty.copy(latitude = point.latitude, longitude = point.longitude)
+            viewModel.edit(mapObject)
+            findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
         }
     }
 
@@ -134,11 +131,8 @@ class MapsFragment : Fragment() {
         mapView = binding.mapview
         val mapkitVersionTextView = binding.mapkitVersion.mapkitVersionValue
         mapkitVersionTextView.text = MapKitFactory.getInstance().version
-
-
         map = mapView.mapWindow.map
         map.addInputListener(inputListener)
-
         binding.location.setOnClickListener {
             setLocation()
         }

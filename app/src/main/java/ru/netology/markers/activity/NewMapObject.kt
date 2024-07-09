@@ -13,15 +13,9 @@ import ru.netology.markers.dto.MapObject
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
 
-private const val LATITUDE = "latitude"
-private const val LONGITUDE = "longitude"
-
 class NewMapObject : Fragment() {
 
     private lateinit var binding: FragmentNewMapObjectBinding
-
-    private var latitude: Double? = null
-    private var longitude: Double? = null
 
     private val viewModel: MapsVeiwModel by viewModels(
         ownerProducer = ::requireParentFragment
@@ -33,34 +27,33 @@ class NewMapObject : Fragment() {
     ): View? {
         binding = FragmentNewMapObjectBinding.inflate(inflater)
 
-        arguments?.let {
-            latitude = it.getDouble(LATITUDE)
-            longitude = it.getDouble(LONGITUDE)
-        }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         with(binding) {
-            save.setOnClickListener {
-                val name = name.text.toString()
-                val descriptin = descriptin.text.toString()
-                if (name.isNullOrEmpty()) {
-                    nameLayout.error = getString(R.string.required)
-                    return@setOnClickListener
-                } else nameLayout.error = null
+            viewModel.edited.observe(viewLifecycleOwner) { edited ->
+                name.setText(edited.name)
+                descriptin.setText(edited.description)
+                save.setOnClickListener {
+                    val name = name.text.toString()
+                    val descriptin = descriptin.text.toString()
+                    if (name.isNullOrEmpty()) {
+                        nameLayout.error = getString(R.string.required)
+                        return@setOnClickListener
+                    } else nameLayout.error = null
 
-                val mapObject = MapObject(
-                    latitude = latitude ?: 0.0,
-                    longitude = longitude ?: 0.0,
-                    name = name,
-                    description = descriptin
-                )
-                viewModel.save(mapObject)
-                findNavController().navigateUp()
+                    val mapObject = edited.copy(
+                        name = name,
+                        description = descriptin
+                    )
+                    viewModel.save(mapObject)
+                    findNavController().navigateUp()
+                }
             }
+
+
         }
     }
 

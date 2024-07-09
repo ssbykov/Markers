@@ -4,21 +4,23 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netology.markers.BuildConfig
 import ru.netology.markers.db.AppDb
 import ru.netology.markers.dto.MapObject
-import ru.netology.markers.entity.MapObjectEntity
-import ru.netology.markers.model.FeedModel
 import ru.netology.markers.repository.MapObjectRepoImpl
+
+val empty = MapObject(
+    id = 0,
+    name = "",
+    latitude = 0.0,
+    longitude = 0.0,
+    description = ""
+)
 
 
 class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
@@ -29,6 +31,9 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         objects.map { it.copy() }
     }.asLiveData(Dispatchers.Default)
 
+    private val _edited = MutableLiveData<MapObject>(empty)
+    val edited: LiveData<MapObject>
+        get() = _edited
 
     private val _currtntLocation = MutableLiveData<Point>(POINT)
 
@@ -39,12 +44,17 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             repository.save(mapObject)
         }
+        _edited.value = empty
     }
 
     fun removeById(id: Long) {
         viewModelScope.launch {
             repository.removeById(id)
         }
+    }
+
+    fun edit(mapObject: MapObject) {
+        _edited.value = mapObject
     }
 
     fun setCurrtntLocation(point: Point) {

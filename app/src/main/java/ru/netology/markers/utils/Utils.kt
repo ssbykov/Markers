@@ -15,12 +15,12 @@ fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 interface DilogActions {
-    fun edit(id: Long)
+    fun edit(mapObject: MapObject)
     fun remove(id: Long)
 }
 
 fun Context.showMapObjectDilog(mapObject: MapObject, dilogActions: DilogActions) {
-    val description = if (mapObject.description ?: "" != "") {
+    val description = if (mapObject.description != "") {
         mapObject.description
     } else "Описание отсутствует"
     MaterialAlertDialogBuilder(this)
@@ -44,6 +44,7 @@ fun Context.showMapObjectDilog(mapObject: MapObject, dilogActions: DilogActions)
             )
         )
         .setPositiveButton(null) { dialog, _ ->
+            dilogActions.edit(mapObject)
             dialog.dismiss()
         }
         .setNeutralButtonIcon(
