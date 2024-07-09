@@ -1,16 +1,19 @@
 package ru.netology.markers.activity
 
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.Animation
@@ -29,7 +32,9 @@ import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.dto.MapObject
+import ru.netology.markers.utils.DilogActions
 import ru.netology.markers.utils.compareLocations
+import ru.netology.markers.utils.showMapObjectDilog
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
@@ -38,10 +43,10 @@ private const val LONGITUDE = "longitude"
 
 class MapsFragment : Fragment() {
 
-
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
+    private lateinit var toast: Toast
     private val viewModel: MapsVeiwModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
@@ -65,7 +70,15 @@ class MapsFragment : Fragment() {
 
 
     private val placemarkTapListener = MapObjectTapListener { mapObject, _ ->
-        requireContext().showToast("Tapped the point (${mapObject.userData})")
+        viewModel.data.observe(viewLifecycleOwner) { objects ->
+            val outMapObject = objects.find { it.id == mapObject.userData }
+            if (outMapObject == null) return@observe
+            val dilogActions = object : DilogActions {
+                override fun edit(id: Long) {}
+                override fun remove(id: Long) = viewModel.removeById(outMapObject.id)
+            }
+            requireContext().showMapObjectDilog(outMapObject, dilogActions)
+        }
         true
     }
 
@@ -84,27 +97,6 @@ class MapsFragment : Fragment() {
             )
         }
     }
-//            val imageProvider =
-//                ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
-//            val placemarkObject = map.mapObjects.addPlacemark().apply {
-//                geometry = point
-//                setIcon(imageProvider)
-//                setTextStyle(TEXT_STYLE)
-//                userData = "Важное место"
-//                setText("Важное место")
-//                val mapObject = MapObject(
-//                    latitude = point.latitude,
-//                    longitude = point.longitude,
-//                    name = "Важное место",
-//                    description = "Описание важного места"
-//                )
-
-//                viewModel.save(mapObject)
-//            }
-
-//            placemarkObject.addTapListener(placemarkTapListener)
-//    }
-//}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,6 +104,23 @@ class MapsFragment : Fragment() {
     ): View? {
         binding = FragmentMapsBinding.inflate(inflater)
         MapKitFactory.initialize(requireContext())
+
+        viewModel.data.observe(viewLifecycleOwner) { objects ->
+            map.mapObjects.clear()
+            objects.forEach {
+                val imageProvider =
+                    ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
+                val placemarkObject = map.mapObjects.addPlacemark().apply {
+                    geometry = Point(it.latitude, it.longitude)
+                    setIcon(imageProvider)
+                    setTextStyle(TEXT_STYLE)
+                    userData = it.id
+                    setText(it.name)
+                }
+
+                placemarkObject.addTapListener(placemarkTapListener)
+            }
+        }
 
         viewModel.currtntLocation.observe(viewLifecycleOwner) { position ->
             move(position, getString(R.string.move_to_location))

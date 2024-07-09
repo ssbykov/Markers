@@ -10,4 +10,6 @@
     <string name="required">Обязательное</string>
     <string name="descriptin">Описание</string>
     <string name="save">Сохранить</string>
+    <string name="no_description">Описание отсутствует</string>
+    <string name="delete">Удалить</string>
 </resources>

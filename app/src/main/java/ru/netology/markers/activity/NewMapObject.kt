@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentNewMapObjectBinding
 import ru.netology.markers.dto.MapObject
 import ru.netology.markers.viewmodel.MapsVeiwModel
@@ -40,14 +42,25 @@ class NewMapObject : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.save.setOnClickListener {
+
+        with(binding) {
+            save.setOnClickListener {
+                val name = name.text.toString()
+                val descriptin = descriptin.text.toString()
+                if (name.isNullOrEmpty()) {
+                    nameLayout.error = getString(R.string.required)
+                    return@setOnClickListener
+                } else nameLayout.error = null
+
                 val mapObject = MapObject(
                     latitude = latitude ?: 0.0,
                     longitude = longitude ?: 0.0,
-                    name = binding.name.text.toString(),
-                    description = binding.descriptin.text.toString()
+                    name = name,
+                    description = descriptin
                 )
-            viewModel.save(mapObject)
+                viewModel.save(mapObject)
+                findNavController().navigateUp()
+            }
         }
     }
 

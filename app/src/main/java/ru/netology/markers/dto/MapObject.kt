@@ -6,5 +6,5 @@ data class MapObject(
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    val description: String?
+    val description: String
 )

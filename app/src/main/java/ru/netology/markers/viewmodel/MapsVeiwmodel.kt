@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import ru.netology.markers.BuildConfig
 import ru.netology.markers.db.AppDb
 import ru.netology.markers.dto.MapObject
+import ru.netology.markers.entity.MapObjectEntity
 import ru.netology.markers.model.FeedModel
 import ru.netology.markers.repository.MapObjectRepoImpl
 
@@ -37,6 +38,12 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
     fun save(mapObject: MapObject) {
         viewModelScope.launch {
             repository.save(mapObject)
+        }
+    }
+
+    fun removeById(id: Long) {
+        viewModelScope.launch {
+            repository.removeById(id)
         }
     }
 

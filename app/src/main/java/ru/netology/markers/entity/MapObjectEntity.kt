@@ -1,5 +1,6 @@
 package ru.netology.markers.entity
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,5 +11,5 @@ data class MapObjectEntity(
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    val description: String?
+    val description: String
 )
