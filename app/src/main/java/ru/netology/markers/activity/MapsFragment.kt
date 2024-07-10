@@ -1,5 +1,6 @@
 package ru.netology.markers.activity
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.dto.LocalMapObject
@@ -35,6 +37,7 @@ import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 import ru.netology.markers.viewmodel.empty
 
+//@AndroidEntryPoint
 class MapsFragment : Fragment() {
 
     private lateinit var binding: FragmentMapsBinding
@@ -46,6 +49,7 @@ class MapsFragment : Fragment() {
     )
 
 
+    @SuppressLint("MissingPermission")
     private fun getLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         fusedLocationClient.lastLocation

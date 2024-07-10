@@ -6,6 +6,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.dagger.hilt.android")
     id ("org.jetbrains.kotlin.kapt")
 
 }
@@ -62,6 +63,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     val room_version = "2.6.1"
 
@@ -81,6 +86,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     kapt ("androidx.room:room-compiler:$room_version")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     implementation (libs.mapstruct)
     annotationProcessor (libs.mapstruct.processor)
     testImplementation(libs.junit)
