@@ -3,27 +3,19 @@ package ru.netology.markers.activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.location.Location
-import com.yandex.mapkit.location.LocationListener
-import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
@@ -53,20 +45,25 @@ class MapsFragment : Fragment() {
         ownerProducer = ::requireParentFragment
     )
 
-    private val locationListener = object : LocationListener {
-        override fun onLocationUpdated(location: Location) {
-            viewModel.setCurrtntLocation(location.position)
-        }
 
-        override fun onLocationStatusUpdated(p0: LocationStatus) {}
-
+    private fun getLocation() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    val point = Point(location.latitude, location.longitude)
+                    viewModel.setCurrtntLocation(point)
+                }
+            }
+            .addOnFailureListener { _ ->
+                requireContext().showToast("Местоположение не определено.")
+            }
     }
 
     val requestPermissionLauncher =
         registerForActivityResult(RequestPermission()) { isGranted ->
             if (isGranted) {
-                MapKitFactory.getInstance().createLocationManager()
-                    .requestSingleUpdate(locationListener)
+                getLocation()
             }
         }
 
@@ -189,39 +186,6 @@ class MapsFragment : Fragment() {
         fun newInstance() = MapsFragment()
     }
 
-    private fun setLocation() {
-        if (checkPermission()) {
-            Snackbar.make(
-                binding.root,
-                getString(R.string.check_your_location),
-                Snackbar.LENGTH_SHORT
-            ).show()
-        } else {
-            val snackbar = Snackbar.make(
-                binding.root,
-                getString(R.string.access_geo_prohibited),
-                Snackbar.LENGTH_SHORT
-            )
-            snackbar.setAction(getString(R.string.ok)) {
-                snackbar.dismiss()
-            }.addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    when (event) {
-                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION,
-                        BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT -> {
-                            viewModel.currtntLocation.observe(viewLifecycleOwner) {
-                                move(it, getString(R.string.go_to_netology))
-                            }
-                        }
-
-                        else -> {}
-                    }
-                }
-            })
-            snackbar.show()
-        }
-    }
-
     private fun move(point: Point, message: String = "") {
         if (compareLocations(map.cameraPosition, point)) return
 
@@ -235,15 +199,14 @@ class MapsFragment : Fragment() {
         }
     }
 
-    private fun checkPermission(): Boolean {
+    private fun setLocation(): Boolean {
         val permissions = android.Manifest.permission.ACCESS_FINE_LOCATION
         return when {
             ContextCompat.checkSelfPermission(
                 requireContext(),
                 permissions
             ) == PackageManager.PERMISSION_GRANTED -> {
-                MapKitFactory.getInstance().createLocationManager()
-                    .requestSingleUpdate(locationListener)
+                getLocation()
                 true
 
             }
@@ -251,6 +214,7 @@ class MapsFragment : Fragment() {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 requireActivity(), permissions
             ) -> {
+                requireContext().showToast(getString(R.string.access_geo_prohibited))
                 false
             }
 
