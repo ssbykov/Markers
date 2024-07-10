@@ -13,6 +13,7 @@ import ru.netology.markers.adapter.MapObjectsAdapter
 import ru.netology.markers.adapter.SetupClickListeners
 import ru.netology.markers.databinding.FragmentFeedObjectsBinding
 import ru.netology.markers.dto.LocalMapObject
+import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
 
@@ -41,7 +42,8 @@ class FeedObjectsFragment : Fragment() {
         val adapter = MapObjectsAdapter(object : SetupClickListeners {
             override fun onItemListener(localMapObject: LocalMapObject) {
                 val point = Point(localMapObject.latitude, localMapObject.longitude)
-                viewModel.setCurrtntLocation(point)
+                val currentLocation = CurrentLocation(point, localMapObject.name)
+                viewModel.setCurrtntLocation(currentLocation)
                 findNavController().navigateUp()
             }
 

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.markers.db.AppDb
 import ru.netology.markers.dto.LocalMapObject
+import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.repository.MapObjectRepoImpl
 
 val empty = LocalMapObject(
@@ -24,7 +25,8 @@ val empty = LocalMapObject(
 
 
 class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
-    private val POINT = Point(55.704473, 37.624700)
+    private val CURRENTLOCATION =
+        CurrentLocation(Point(55.704473, 37.624700), null)
 
     private val repository = MapObjectRepoImpl(AppDb.getInstance(application).mapsDao())
     val data = repository.data.map { objects ->
@@ -35,9 +37,9 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
     val edited: LiveData<LocalMapObject>
         get() = _edited
 
-    private val _currtntLocation = MutableLiveData<Point>(POINT)
+    private val _currtntLocation = MutableLiveData<CurrentLocation>(CURRENTLOCATION)
 
-    val currtntLocation: LiveData<Point>
+    val currtntLocation: LiveData<CurrentLocation>
         get() = _currtntLocation
 
     fun save(localMapObject: LocalMapObject) {
@@ -60,9 +62,8 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         _edited.value = localMapObject
     }
 
-    fun setCurrtntLocation(point: Point) {
-        _currtntLocation.value = point
+    fun setCurrtntLocation(currentLocation: CurrentLocation) {
+        _currtntLocation.value = currentLocation
     }
-
 
 }

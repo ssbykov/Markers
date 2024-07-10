@@ -27,7 +27,9 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
+import ru.netology.markers.databinding.MapObjectCardBinding
 import ru.netology.markers.dto.LocalMapObject
+import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.utils.DilogActions
 import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showMapObjectDilog
@@ -52,7 +54,8 @@ class MapsFragment : Fragment() {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     val point = Point(location.latitude, location.longitude)
-                    viewModel.setCurrtntLocation(point)
+                    val currentLocation = CurrentLocation(point, "Текущая локация")
+                    viewModel.setCurrtntLocation(currentLocation)
                 }
             }
             .addOnFailureListener { _ ->
@@ -72,15 +75,16 @@ class MapsFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) { localMapObjects ->
             val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
             if (selectedMapObject == null) return@observe
-            val dilogActions = object : DilogActions {
-                override fun edit(localMapObject: LocalMapObject) {
-                    viewModel.edit(selectedMapObject)
-                    findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
-                }
-
-                override fun remove(id: Long) = viewModel.removeById(selectedMapObject.id)
-            }
-            requireContext().showMapObjectDilog(selectedMapObject, dilogActions)
+//            val dilogActions = object : DilogActions {
+//                override fun edit(localMapObject: LocalMapObject) {
+//                    viewModel.edit(selectedMapObject)
+//                    findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
+//                }
+//
+//                override fun remove(id: Long) = viewModel.removeById(selectedMapObject.id)
+//            }
+            val card = MapObjectCardBinding.inflate(layoutInflater)
+            requireContext().showMapObjectDilog(selectedMapObject, card.root)
         }
         true
     }
@@ -95,13 +99,15 @@ class MapsFragment : Fragment() {
 
         override fun onMapObjectDragEnd(mapObject: MapObject) {
             val selectedMapObject = viewModel.getById(mapObject.userData as Long)
-            if (selectedMapObject == null || point.latitude == 0.0 && point.longitude == 0.0) return
-            val localMapObject = selectedMapObject.copy(
-                id = selectedMapObject.id,
-                latitude = point.latitude,
-                longitude = point.longitude
-            )
-            viewModel.save(localMapObject)
+            if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
+                val localMapObject = selectedMapObject.copy(
+                    id = selectedMapObject.id,
+                    latitude = point.latitude,
+                    longitude = point.longitude
+                )
+                viewModel.save(localMapObject)
+                point = Point()
+            }
         }
     }
 
@@ -144,8 +150,8 @@ class MapsFragment : Fragment() {
                 placemarkObject.addTapListener(placemarkTapListener)
             }
         }
-        viewModel.currtntLocation.observe(viewLifecycleOwner) { position ->
-            move(position, getString(R.string.move_to_location))
+        viewModel.currtntLocation.observe(viewLifecycleOwner) { location ->
+            move(location)
         }
 
         return binding.root
@@ -159,9 +165,10 @@ class MapsFragment : Fragment() {
         map = mapView.mapWindow.map
         map.addInputListener(inputListener)
         binding.location.setOnClickListener {
-            setLocation()
+            if (!setLocation()) {
+                requireContext().showToast(getString(R.string.access_geo_prohibited))
+            }
         }
-
     }
 
     override fun onStart() {
@@ -186,16 +193,21 @@ class MapsFragment : Fragment() {
         fun newInstance() = MapsFragment()
     }
 
-    private fun move(point: Point, message: String = "") {
-        if (compareLocations(map.cameraPosition, point)) return
+    private fun move(currentLocation: CurrentLocation) {
+        if (compareLocations(map.cameraPosition, currentLocation.point)) return
 
         map.move(
-            CameraPosition(point, 17.0f, 150.0f, 30.0f),
+            CameraPosition(currentLocation.point, 17.0f, 150.0f, 30.0f),
             Animation(Animation.Type.SMOOTH, 5F),
             null
         )
-        if (message.isNotBlank()) {
-            requireContext().showToast(message)
+        if (!currentLocation.name.isNullOrBlank()) {
+            requireContext().showToast(
+                requireContext().getString(
+                    R.string.move_to_location,
+                    currentLocation.name
+                )
+            )
         }
     }
 
@@ -214,7 +226,6 @@ class MapsFragment : Fragment() {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 requireActivity(), permissions
             ) -> {
-                requireContext().showToast(getString(R.string.access_geo_prohibited))
                 false
             }
 
