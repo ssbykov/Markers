@@ -26,5 +26,9 @@
         android:id="@+id/feedObjects"
         android:name="ru.netology.markers.activity.FeedObjectsFragment"
         android:label="fragment_feed_objects"
-        tools:layout="@layout/fragment_feed_objects" />
+        tools:layout="@layout/fragment_feed_objects" >
+        <action
+            android:id="@+id/action_feedObjects_to_newMapObject"
+            app:destination="@id/newMapObject" />
+    </fragment>
 </navigation>

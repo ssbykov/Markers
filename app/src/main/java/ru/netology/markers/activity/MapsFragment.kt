@@ -125,24 +125,6 @@ class MapsFragment : Fragment() {
         binding = FragmentMapsBinding.inflate(inflater)
         MapKitFactory.initialize(requireContext())
 
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.main_menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.objects -> {
-                        findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-
-        }, viewLifecycleOwner)
-
         binding.listObjects.setOnClickListener {
             findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
         }

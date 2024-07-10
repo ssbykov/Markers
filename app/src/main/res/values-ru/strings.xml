@@ -16,4 +16,6 @@
     <string name="title_name">Название: %1$s</string>
     <string name="card_description">Описание: %1$s</string>
     <string name="list_objects">Список объектов</string>
+    <string name="edit">Изменить</string>
+    <string name="location">Координаты: %1$s, %2$s</string>
 </resources>

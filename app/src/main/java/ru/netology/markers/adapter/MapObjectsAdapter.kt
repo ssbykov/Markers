@@ -2,6 +2,7 @@ package ru.netology.markers.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +39,32 @@ class ObjectVieweHolder(
                     R.string.card_description,
                     localMapObject.description
                 )
+            point.text =
+                root.resources.getString(
+                    R.string.location,
+                    String.format("%.6f", localMapObject.latitude),
+                    String.format("%.6f", localMapObject.longitude)
+                )
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.object_list_menu)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.remove -> {
+                                setupClickListeners.onRemoveListener(localMapObject)
+                                true
+                            }
+
+                            R.id.edit -> {
+                                setupClickListeners.onEditListener(localMapObject)
+                                true
+                            }
+
+                            else -> false
+                        }
+                    }
+                }.show()
+            }
             root.setOnClickListener {
                 setupClickListeners.onItemListener(localMapObject)
             }

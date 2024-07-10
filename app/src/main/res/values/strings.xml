@@ -10,6 +10,8 @@
     <string name="required">Required</string>
     <string name="descriptin">Descriptin</string>
     <string name="save">Save</string>
+    <string name="location">Location: %1$s, %2$s</string>
+    <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="no_description">No description</string>
     <string name="my_objects">My objects</string>
