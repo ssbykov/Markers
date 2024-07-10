@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomMaterialCardView" parent="@style/Widget.Material3.CardView.Elevated">
+        <item name="android:background">#00BCD4</item>
+    </style>
+</resources>

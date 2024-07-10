@@ -13,5 +13,8 @@
     <string name="delete">Delete</string>
     <string name="no_description">No description</string>
     <string name="my_objects">My objects</string>
+    <string name="title_name">Name: %1$s</string>
+    <string name="card_description">Description: %1$s</string>
+    <string name="list_objects">List of objects</string>
 
 </resources>

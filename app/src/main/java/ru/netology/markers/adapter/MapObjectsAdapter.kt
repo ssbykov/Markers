@@ -5,10 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ru.netology.markers.R
 import ru.netology.markers.databinding.MapObjectCardBinding
 import ru.netology.markers.dto.LocalMapObject
 
-class MapObjectsAdapter() : ListAdapter<LocalMapObject, ObjectVieweHolder>(MapObjectDiffCallback) {
+class MapObjectsAdapter(
+    private val setupClickListeners: SetupClickListeners
+) : ListAdapter<LocalMapObject, ObjectVieweHolder>(MapObjectDiffCallback) {
     override fun onBindViewHolder(holder: ObjectVieweHolder, position: Int) {
         val localMapObject = getItem(position)
         holder.bind(localMapObject)
@@ -17,17 +20,28 @@ class MapObjectsAdapter() : ListAdapter<LocalMapObject, ObjectVieweHolder>(MapOb
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ObjectVieweHolder {
         val binding =
             MapObjectCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ObjectVieweHolder(binding)
+        return ObjectVieweHolder(binding, setupClickListeners)
     }
 
 }
 
-class ObjectVieweHolder(private val binding: MapObjectCardBinding) :
+class ObjectVieweHolder(
+    private val binding: MapObjectCardBinding,
+    private val setupClickListeners: SetupClickListeners,
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(localMapObject: LocalMapObject) {
-        binding.name.text = localMapObject.name
-        binding.descriptin.text = localMapObject.description
-
+        with(binding) {
+            name.text = root.resources.getString(R.string.title_name, localMapObject.name)
+            descriptin.text =
+                root.resources.getString(
+                    R.string.card_description,
+                    localMapObject.description
+                )
+            root.setOnClickListener {
+                setupClickListeners.onItemListener(localMapObject)
+            }
+        }
     }
 }
 

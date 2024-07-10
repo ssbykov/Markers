@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Markers</string>
+    <string name="app_name">Маркеры</string>
     <string name="mapkit_version">"Версия карт: "</string>
     <string name="access_geo_prohibited">Доступ к геолокации запрещен.</string>
     <string name="move_to_location">Перемещаемся в точку вашей локации.</string>
@@ -13,4 +13,7 @@
     <string name="no_description">Описание отсутствует</string>
     <string name="delete">Удалить</string>
     <string name="my_objects">Мои объекты</string>
+    <string name="title_name">Название: %1$s</string>
+    <string name="card_description">Описание: %1$s</string>
+    <string name="list_objects">Список объектов</string>
 </resources>

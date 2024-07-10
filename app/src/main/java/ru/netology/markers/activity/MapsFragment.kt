@@ -98,7 +98,7 @@ class MapsFragment : Fragment() {
 
         override fun onMapObjectDragEnd(mapObject: MapObject) {
             val selectedMapObject = viewModel.getById(mapObject.userData as Long)
-            if (selectedMapObject == null) return
+            if (selectedMapObject == null || point.latitude == 0.0 && point.longitude == 0.0) return
             val localMapObject = selectedMapObject.copy(
                 id = selectedMapObject.id,
                 latitude = point.latitude,
@@ -142,6 +142,10 @@ class MapsFragment : Fragment() {
             }
 
         }, viewLifecycleOwner)
+
+        binding.listObjects.setOnClickListener {
+            findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
+        }
 
         viewModel.data.observe(viewLifecycleOwner) { objects ->
             map.mapObjects.clear()
