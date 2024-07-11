@@ -11,8 +11,8 @@ import javax.inject.Singleton
 @Module
 class ActivityModule {
 
-//    @Singleton
-//    @Provides
-//    fun providerMapKitFactory() = MapKitFactory.getInstance()
+    @Singleton
+    @Provides
+    fun providerMapKitFactory() = MapKitFactory.getInstance()
 
 }
