@@ -91,6 +91,9 @@ class MapsFragment : Fragment() {
                     selectedMapObject.latitude.toFloat(),
                     selectedMapObject.longitude.toFloat()
                 )
+                root.setOnClickListener {
+                    DialogManager.dismissDialog()
+                }
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.object_list_menu)
@@ -161,10 +164,6 @@ class MapsFragment : Fragment() {
         binding = FragmentMapsBinding.inflate(inflater)
         MapKitFactory.initialize(requireContext())
 
-        binding.listObjects.setOnClickListener {
-            findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
-        }
-
         viewModel.data.observe(viewLifecycleOwner) { objects ->
             map.mapObjects.clear()
             objects.forEach {
@@ -202,6 +201,11 @@ class MapsFragment : Fragment() {
                 requireContext().showToast(getString(R.string.access_geo_prohibited))
             }
         }
+
+        binding.listObjects.setOnClickListener {
+            findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
+        }
+
     }
 
     override fun onStart() {
