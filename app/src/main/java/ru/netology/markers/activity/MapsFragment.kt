@@ -27,6 +27,7 @@ import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
+import ru.netology.markers.InterfaceImpl.MapObjectDragListenerImpl
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.databinding.MapObjectCardBinding
@@ -53,6 +54,7 @@ class MapsFragment : Fragment() {
     private val viewModel: MapsVeiwModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
+    private val mapObjectDragListener = MapObjectDragListenerImpl(viewModel)
 
 
     @SuppressLint("MissingPermission")
@@ -127,28 +129,28 @@ class MapsFragment : Fragment() {
         true
     }
 
-    private val mapObjectDragListener = object : MapObjectDragListener {
-        var point = Point()
-        override fun onMapObjectDragStart(mapObject: MapObject) {}
-
-        override fun onMapObjectDrag(mapObject: MapObject, p1: Point) {
-            point = p1
-        }
-
-        override fun onMapObjectDragEnd(mapObject: MapObject) {
-            val selectedMapObject = viewModel.getById(mapObject.userData as Long)
-            if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
-                val localMapObject = selectedMapObject.copy(
-                    id = selectedMapObject.id,
-                    latitude = point.latitude,
-                    longitude = point.longitude
-                )
-                viewModel.save(localMapObject)
-                point = Point()
-            }
-        }
-    }
-
+//    private val mapObjectDragListener = object : MapObjectDragListener {
+//        var point = Point()
+//        override fun onMapObjectDragStart(mapObject: MapObject) {}
+//
+//        override fun onMapObjectDrag(mapObject: MapObject, p1: Point) {
+//            point = p1
+//        }
+//
+//        override fun onMapObjectDragEnd(mapObject: MapObject) {
+//            val selectedMapObject = viewModel.getById(mapObject.userData as Long)
+//            if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
+//                val localMapObject = selectedMapObject.copy(
+//                    id = selectedMapObject.id,
+//                    latitude = point.latitude,
+//                    longitude = point.longitude
+//                )
+//                viewModel.save(localMapObject)
+//                point = Point()
+//            }
+//        }
+//    }
+//
     val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {}
 
