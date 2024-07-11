@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
@@ -14,10 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.location.LocationServices
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.yandex.mapkit.Animation
-import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.InputListener
@@ -28,6 +26,7 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.databinding.MapObjectCardBinding
@@ -37,13 +36,20 @@ import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 import ru.netology.markers.viewmodel.empty
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MapsFragment : Fragment() {
 
+    @Inject
+    lateinit var mapKitFactory: MapKit
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mapView: MapView
     private lateinit var map: Map
-    private lateinit var toast: Toast
+
+    @Inject
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private val viewModel: MapsVeiwModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
@@ -51,7 +57,6 @@ class MapsFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun getLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
@@ -61,9 +66,6 @@ class MapsFragment : Fragment() {
                         getString(R.string.current_location)
                     )
                 }
-            }
-            .addOnFailureListener { _ ->
-                requireContext().showToast(getString(R.string.location_not_determined))
             }
     }
 
@@ -162,7 +164,6 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapsBinding.inflate(inflater)
-        MapKitFactory.initialize(requireContext())
 
         viewModel.data.observe(viewLifecycleOwner) { objects ->
             map.mapObjects.clear()
@@ -193,7 +194,7 @@ class MapsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mapView = binding.mapview
         val mapkitVersionTextView = binding.mapkitVersion.mapkitVersionValue
-        mapkitVersionTextView.text = MapKitFactory.getInstance().version
+        mapkitVersionTextView.text = mapKitFactory.version
         map = mapView.mapWindow.map
         map.addInputListener(inputListener)
         binding.location.setOnClickListener {
@@ -210,13 +211,13 @@ class MapsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        MapKitFactory.getInstance().onStart()
+        mapKitFactory.onStart()
         mapView.onStart()
     }
 
     override fun onStop() {
         mapView.onStop()
-        MapKitFactory.getInstance().onStop()
+        mapKitFactory.onStop()
         DialogManager.dismissDialog()
         map.cameraPosition.target.apply {
             viewModel.setCurrtntLocation(latitude, longitude, getString(R.string.last_location))

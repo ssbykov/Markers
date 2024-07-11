@@ -7,16 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yandex.mapkit.geometry.Point
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.adapter.MapObjectsAdapter
 import ru.netology.markers.adapter.SetupClickListeners
 import ru.netology.markers.databinding.FragmentFeedObjectsBinding
 import ru.netology.markers.dto.LocalMapObject
-import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
-
+@AndroidEntryPoint
 class FeedObjectsFragment : Fragment() {
     private lateinit var binding: FragmentFeedObjectsBinding
     private val viewModel: MapsVeiwModel by viewModels(

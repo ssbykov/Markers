@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.yandex.mapkit.geometry.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.markers.Constants.POINT
@@ -17,6 +19,8 @@ import ru.netology.markers.db.AppDb
 import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.repository.MapObjectRepoImpl
+import javax.inject.Inject
+
 
 val empty = LocalMapObject(
     id = 0,
@@ -30,7 +34,12 @@ const val KEY_LATITUDE = "KEY_LATITUDE"
 const val KEY_LONGITUDE = "KEY_LONGITUDE"
 const val KEY_POINT = "point"
 
-class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
+@OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
+class MapsVeiwModel @Inject constructor(
+    application: Application,
+    private val repository: MapObjectRepoImpl
+) : AndroidViewModel(application) {
     private val CURRENTLOCATION =
         CurrentLocation(POINT, null)
 
@@ -54,7 +63,6 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private val repository = MapObjectRepoImpl(AppDb.getInstance(application).mapsDao())
     val data = repository.data.map { objects ->
         objects.map { it.copy() }
     }.asLiveData(Dispatchers.Default)

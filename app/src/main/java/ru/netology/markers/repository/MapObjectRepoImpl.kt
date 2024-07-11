@@ -8,8 +8,13 @@ import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.dto.MapObjectMapperImpl
 import ru.netology.markers.dto.toDto
 import ru.netology.markers.entity.MapObjectEntity
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MapObjectRepoImpl(private val dao: MapsDao) : MapObjectRepo {
+@Singleton
+class MapObjectRepoImpl @Inject constructor (
+    private val dao: MapsDao
+) : MapObjectRepo {
     override val data = dao.getAll()
         .map(List<MapObjectEntity>::toDto)
         .flowOn(Dispatchers.Default)

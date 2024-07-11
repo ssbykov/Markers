@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yandex.mapkit.geometry.Point
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentNewMapObjectBinding
-import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
-
+@AndroidEntryPoint
 class NewMapObjectFragment : Fragment() {
 
     private lateinit var binding: FragmentNewMapObjectBinding
