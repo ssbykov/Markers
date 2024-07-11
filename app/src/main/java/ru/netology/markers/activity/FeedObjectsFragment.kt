@@ -41,9 +41,9 @@ class FeedObjectsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = MapObjectsAdapter(object : SetupClickListeners {
             override fun onItemListener(localMapObject: LocalMapObject) {
-                val point = Point(localMapObject.latitude, localMapObject.longitude)
-                val currentLocation = CurrentLocation(point, localMapObject.name)
-                viewModel.setCurrtntLocation(currentLocation)
+                with(localMapObject) {
+                    viewModel.setCurrtntLocation(latitude, longitude, name)
+                }
                 findNavController().navigateUp()
             }
 
@@ -52,6 +52,7 @@ class FeedObjectsFragment : Fragment() {
             }
 
             override fun onEditListener(localMapObject: LocalMapObject) {
+                viewModel.edit(localMapObject)
                 findNavController().navigate(
                     R.id.action_feedObjects_to_newMapObject
                 )

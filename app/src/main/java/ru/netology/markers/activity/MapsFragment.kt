@@ -32,6 +32,7 @@ import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.databinding.MapObjectCardBinding
 import ru.netology.markers.model.CurrentLocation
+import ru.netology.markers.utils.DialogManager
 import ru.netology.markers.utils.compareLocations
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
@@ -54,9 +55,11 @@ class MapsFragment : Fragment() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    val point = Point(location.latitude, location.longitude)
-                    val currentLocation = CurrentLocation(point, getString(R.string.current_location))
-                    viewModel.setCurrtntLocation(currentLocation)
+                    viewModel.setCurrtntLocation(
+                        location.latitude,
+                        location.longitude,
+                        getString(R.string.current_location)
+                    )
                 }
             }
             .addOnFailureListener { _ ->
@@ -95,6 +98,7 @@ class MapsFragment : Fragment() {
                             when (item.itemId) {
                                 R.id.remove -> {
                                     viewModel.removeById(selectedMapObject.id)
+                                    DialogManager.dismissDialog()
                                     true
                                 }
 
@@ -113,11 +117,7 @@ class MapsFragment : Fragment() {
                     }.show()
                 }
             }
-            val dilog = MaterialAlertDialogBuilder(requireContext())
-                .setView(card.root)
-                .setCancelable(true)
-                .show()
-            fun dilogClose() = dilog.dismiss()
+            DialogManager.showDialog(requireContext(), card.root)
         }
         true
     }
@@ -213,6 +213,10 @@ class MapsFragment : Fragment() {
     override fun onStop() {
         mapView.onStop()
         MapKitFactory.getInstance().onStop()
+        DialogManager.dismissDialog()
+        map.cameraPosition.target.apply {
+            viewModel.setCurrtntLocation(latitude, longitude, getString(R.string.last_location))
+        }
         super.onStop()
     }
 

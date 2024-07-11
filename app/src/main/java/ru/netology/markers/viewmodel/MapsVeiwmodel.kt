@@ -84,12 +84,15 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         _edited.value = localMapObject
     }
 
-    fun setCurrtntLocation(currentLocation: CurrentLocation) {
-        _currtntLocation.value = currentLocation
+
+    fun setCurrtntLocation(latitude: Double, longitude: Double, name: String) {
+        val point = Point(latitude, longitude)
+        _currtntLocation.value = CurrentLocation(point, name)
         startPointDraft.edit()
-            .putFloat(KEY_LATITUDE, currentLocation.point.latitude.toFloat())
-            .putFloat(KEY_LONGITUDE, currentLocation.point.longitude.toFloat())
+            .putFloat(KEY_LATITUDE, latitude.toFloat())
+            .putFloat(KEY_LONGITUDE, longitude.toFloat())
             .apply()
     }
+
 
 }

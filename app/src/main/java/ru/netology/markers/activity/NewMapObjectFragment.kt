@@ -50,9 +50,9 @@ class NewMapObjectFragment : Fragment() {
                         description = descriptin
                     )
                     viewModel.save(mapObject)
-                    val point = Point(mapObject.latitude, mapObject.longitude)
-                    val currentLocation = CurrentLocation(point, mapObject.name)
-                    viewModel.setCurrtntLocation(currentLocation)
+                    with(mapObject) {
+                        viewModel.setCurrtntLocation(latitude, longitude, name)
+                    }
                     findNavController().navigateUp()
                 }
             }
