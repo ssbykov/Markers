@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.markers.Constants.POINT
+import ru.netology.markers.Constants.ZERO
+import ru.netology.markers.R
 import ru.netology.markers.db.AppDb
 import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.model.CurrentLocation
@@ -26,13 +28,14 @@ val empty = LocalMapObject(
 
 const val KEY_LATITUDE = "KEY_LATITUDE"
 const val KEY_LONGITUDE = "KEY_LONGITUDE"
+const val KEY_POINT = "point"
 
 class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
     private val CURRENTLOCATION =
         CurrentLocation(POINT, null)
 
     val startPointDraft =
-        application.getSharedPreferences("point", android.content.Context.MODE_PRIVATE)
+        application.getSharedPreferences(KEY_POINT, android.content.Context.MODE_PRIVATE)
 
     private val _currtntLocation = MutableLiveData<CurrentLocation>()
 
@@ -40,13 +43,14 @@ class MapsVeiwModel(application: Application) : AndroidViewModel(application) {
         get() = _currtntLocation
 
     init {
-        val startLatitude = startPointDraft.getFloat(KEY_LATITUDE, 1000.0F).toDouble()
-        val startLongitude = startPointDraft.getFloat(KEY_LONGITUDE, 1000.0F).toDouble()
-        if (startLatitude == 1000.0) {
+        val startLatitude = startPointDraft.getFloat(KEY_LATITUDE, ZERO).toDouble()
+        val startLongitude = startPointDraft.getFloat(KEY_LONGITUDE, ZERO).toDouble()
+        if (startLatitude == ZERO.toDouble()) {
             _currtntLocation.value = CURRENTLOCATION
         } else {
             val srartPoint = Point(startLatitude, startLongitude)
-            _currtntLocation.value = CurrentLocation(srartPoint, "Последняя локация")
+            val name = application.getString(R.string.last_location)
+            _currtntLocation.value = CurrentLocation(srartPoint, name)
         }
     }
 

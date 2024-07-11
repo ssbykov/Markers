@@ -55,12 +55,12 @@ class MapsFragment : Fragment() {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     val point = Point(location.latitude, location.longitude)
-                    val currentLocation = CurrentLocation(point, "Текущая локация")
+                    val currentLocation = CurrentLocation(point, getString(R.string.current_location))
                     viewModel.setCurrtntLocation(currentLocation)
                 }
             }
             .addOnFailureListener { _ ->
-                requireContext().showToast("Местоположение не определено.")
+                requireContext().showToast(getString(R.string.location_not_determined))
             }
     }
 
@@ -72,6 +72,7 @@ class MapsFragment : Fragment() {
         }
 
 
+    @SuppressLint("StringFormatMatches")
     private val placemarkTapListener = MapObjectTapListener { mapObject, _ ->
         viewModel.data.observe(viewLifecycleOwner) { localMapObjects ->
             val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
@@ -84,8 +85,8 @@ class MapsFragment : Fragment() {
                 )
                 point.text = requireContext().getString(
                     R.string.location,
-                    String.format("%.6f", selectedMapObject.latitude),
-                    String.format("%.6f", selectedMapObject.longitude)
+                    selectedMapObject.latitude.toFloat(),
+                    selectedMapObject.longitude.toFloat()
                 )
                 menu.setOnClickListener {
                     PopupMenu(it.context, it).apply {
