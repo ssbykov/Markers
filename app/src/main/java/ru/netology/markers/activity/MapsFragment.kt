@@ -1,5 +1,6 @@
 package ru.netology.markers.activity
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -28,11 +31,8 @@ import com.yandex.runtime.image.ImageProvider
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.databinding.MapObjectCardBinding
-import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.model.CurrentLocation
-import ru.netology.markers.utils.DilogActions
 import ru.netology.markers.utils.compareLocations
-import ru.netology.markers.utils.showMapObjectDilog
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 import ru.netology.markers.viewmodel.empty
@@ -48,6 +48,7 @@ class MapsFragment : Fragment() {
     )
 
 
+    @SuppressLint("MissingPermission")
     private fun getLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         fusedLocationClient.lastLocation
@@ -75,16 +76,47 @@ class MapsFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) { localMapObjects ->
             val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
             if (selectedMapObject == null) return@observe
-//            val dilogActions = object : DilogActions {
-//                override fun edit(localMapObject: LocalMapObject) {
-//                    viewModel.edit(selectedMapObject)
-//                    findNavController().navigate(R.id.action_mapsFragment_to_newMapObject)
-//                }
-//
-//                override fun remove(id: Long) = viewModel.removeById(selectedMapObject.id)
-//            }
-            val card = MapObjectCardBinding.inflate(layoutInflater)
-            requireContext().showMapObjectDilog(selectedMapObject, card.root)
+            val card = MapObjectCardBinding.inflate(layoutInflater).apply {
+                name.text = requireContext().getString(R.string.title_name, selectedMapObject.name)
+                descriptin.text = requireContext().getString(
+                    R.string.card_description,
+                    selectedMapObject.description
+                )
+                point.text = requireContext().getString(
+                    R.string.location,
+                    String.format("%.6f", selectedMapObject.latitude),
+                    String.format("%.6f", selectedMapObject.longitude)
+                )
+                menu.setOnClickListener {
+                    PopupMenu(it.context, it).apply {
+                        inflate(R.menu.object_list_menu)
+                        setOnMenuItemClickListener { item ->
+                            when (item.itemId) {
+                                R.id.remove -> {
+                                    viewModel.removeById(selectedMapObject.id)
+                                    true
+                                }
+
+                                R.id.edit -> {
+                                    viewModel.edit(selectedMapObject)
+                                    findNavController().navigate(
+                                        R.id.action_mapsFragment_to_newMapObject
+                                    )
+                                    dismiss()
+                                    true
+                                }
+
+                                else -> false
+                            }
+                        }
+                    }.show()
+                }
+            }
+            val dilog = MaterialAlertDialogBuilder(requireContext())
+                .setView(card.root)
+                .setCancelable(true)
+                .show()
+            fun dilogClose() = dilog.dismiss()
         }
         true
     }

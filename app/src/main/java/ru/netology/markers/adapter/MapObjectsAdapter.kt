@@ -29,8 +29,7 @@ class MapObjectsAdapter(
 class ObjectVieweHolder(
     private val binding: MapObjectCardBinding,
     private val setupClickListeners: SetupClickListeners,
-) :
-    RecyclerView.ViewHolder(binding.root) {
+) : RecyclerView.ViewHolder(binding.root) {
     fun bind(localMapObject: LocalMapObject) {
         with(binding) {
             name.text = root.resources.getString(R.string.title_name, localMapObject.name)
