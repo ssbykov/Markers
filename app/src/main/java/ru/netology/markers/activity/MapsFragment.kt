@@ -96,7 +96,7 @@ class MapsFragment : Fragment() {
             objects.forEach {
                 val imageProvider =
                     ImageProvider.fromResource(context, R.drawable.ic_location_40)
-                val placemarkObject = map.mapObjects.addPlacemark()
+                map.mapObjects.addPlacemark()
                     .apply {
                         geometry = Point(it.latitude, it.longitude)
                         userData = it.id
@@ -105,9 +105,8 @@ class MapsFragment : Fragment() {
                         setTextStyle(TEXT_STYLE)
                         setText(it.name)
                         setDragListener(mapObjectDragListener)
+                        addTapListener(placemarkTapListener)
                     }
-
-                placemarkObject.addTapListener(placemarkTapListener)
             }
         }
         viewModel.currtntLocation.observe(viewLifecycleOwner) { location ->
