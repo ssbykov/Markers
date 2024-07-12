@@ -21,5 +21,5 @@ interface MapsDao {
     @Query(
         """SELECT * FROM mapObjects WHERE id = :id;"""
     )
-    fun getById(id: Long): MapObjectEntity?
+    suspend fun getById(id: Long): MapObjectEntity?
 }

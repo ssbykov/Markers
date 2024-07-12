@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentNewMapObjectBinding
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
-
+@AndroidEntryPoint
 class NewMapObjectFragment : Fragment() {
 
     private lateinit var binding: FragmentNewMapObjectBinding
@@ -48,6 +49,9 @@ class NewMapObjectFragment : Fragment() {
                         description = descriptin
                     )
                     viewModel.save(mapObject)
+                    with(mapObject) {
+                        viewModel.setCurrtntLocation(latitude, longitude, name)
+                    }
                     findNavController().navigateUp()
                 }
             }

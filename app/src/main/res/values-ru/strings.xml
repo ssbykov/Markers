@@ -3,7 +3,7 @@
     <string name="app_name">Маркеры</string>
     <string name="mapkit_version">"Версия карт: "</string>
     <string name="access_geo_prohibited">Доступ к геолокации запрещен.</string>
-    <string name="move_to_location">Перемещаемся в точку вашей локации.</string>
+    <string name="move_to_location">Перемещаемся в точку: %1$s.</string>
     <string name="check_your_location">Определяю место нахождения.</string>
     <string name="go_to_netology">Перемещаемся в Нетологию.</string>
     <string name="name">Название</string>
@@ -18,4 +18,7 @@
     <string name="list_objects">Список объектов</string>
     <string name="edit">Изменить</string>
     <string name="location">Координаты: %1$s, %2$s</string>
+    <string name="last_location">Последняя локация</string>
+    <string name="current_location">Текущая локация</string>
+    <string name="location_not_determined">Местоположение не определено</string>
 </resources>

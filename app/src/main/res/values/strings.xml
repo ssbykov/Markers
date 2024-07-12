@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Markers</string>
     <string name="mapkit_version">Mapkit version:</string>
-    <string name="move_to_location">Moving to the point of your location.</string>
+    <string name="move_to_location">Moving to the point %1$s.</string>
     <string name="access_geo_prohibited">Access to geolocation is prohibited.</string>
     <string name="ok" translatable="false">OK</string>
     <string name="check_your_location">Determine your location.</string>
@@ -10,7 +10,7 @@
     <string name="required">Required</string>
     <string name="descriptin">Descriptin</string>
     <string name="save">Save</string>
-    <string name="location">Location: %1$s, %2$s</string>
+    <string name="location">Location: %.2f, %.2f</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="no_description">No description</string>
@@ -18,5 +18,8 @@
     <string name="title_name">Name: %1$s</string>
     <string name="card_description">Description: %1$s</string>
     <string name="list_objects">List of objects</string>
+    <string name="last_location">Last location</string>
+    <string name="current_location">Currtnt location</string>
+    <string name="location_not_determined">The location is not determined</string>
 
 </resources>

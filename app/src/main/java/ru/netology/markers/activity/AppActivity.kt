@@ -4,11 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.yandex.mapkit.MapKitFactory
-import ru.netology.markers.BuildConfig
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.databinding.ActivityAppBinding
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityAppBinding

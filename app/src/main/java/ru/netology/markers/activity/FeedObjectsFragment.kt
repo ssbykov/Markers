@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yandex.mapkit.geometry.Point
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.R
 import ru.netology.markers.adapter.MapObjectsAdapter
 import ru.netology.markers.adapter.SetupClickListeners
@@ -15,7 +15,7 @@ import ru.netology.markers.databinding.FragmentFeedObjectsBinding
 import ru.netology.markers.dto.LocalMapObject
 import ru.netology.markers.viewmodel.MapsVeiwModel
 
-
+@AndroidEntryPoint
 class FeedObjectsFragment : Fragment() {
     private lateinit var binding: FragmentFeedObjectsBinding
     private val viewModel: MapsVeiwModel by viewModels(
@@ -40,8 +40,9 @@ class FeedObjectsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = MapObjectsAdapter(object : SetupClickListeners {
             override fun onItemListener(localMapObject: LocalMapObject) {
-                val point = Point(localMapObject.latitude, localMapObject.longitude)
-                viewModel.setCurrtntLocation(point)
+                with(localMapObject) {
+                    viewModel.setCurrtntLocation(latitude, longitude, name)
+                }
                 findNavController().navigateUp()
             }
 
@@ -51,8 +52,9 @@ class FeedObjectsFragment : Fragment() {
 
             override fun onEditListener(localMapObject: LocalMapObject) {
                 viewModel.edit(localMapObject)
-                findNavController().navigate(R.id.action_feedObjects_to_newMapObject)
-
+                findNavController().navigate(
+                    R.id.action_feedObjects_to_newMapObject
+                )
             }
         })
         binding.list.adapter = adapter

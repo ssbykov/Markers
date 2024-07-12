@@ -7,6 +7,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.google.dagger.hilt.android) apply false
 }
 
 val key: String = getLocalProperty("MAPKIT_API_KEY").toString()
