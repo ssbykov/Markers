@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.netology.markers.Constants.POINT
 import ru.netology.markers.Constants.ZERO
 import ru.netology.markers.R
@@ -85,8 +86,9 @@ class MapsVeiwModel @Inject constructor(
         }
     }
 
-    fun getById(id: Long) = repository.getById(id)
-
+    suspend fun getById(id: Long): LocalMapObject? {
+        return repository.getById(id)
+    }
 
     fun edit(localMapObject: LocalMapObject) {
         _edited.value = localMapObject

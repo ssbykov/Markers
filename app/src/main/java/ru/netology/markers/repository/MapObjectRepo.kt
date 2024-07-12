@@ -5,7 +5,7 @@ import ru.netology.markers.dto.LocalMapObject
 
 interface MapObjectRepo {
     val data: Flow<List<LocalMapObject>>
-    fun getById(id: Long): LocalMapObject?
+    suspend fun getById(id: Long): LocalMapObject?
     suspend fun removeById(id: Long)
     suspend fun save(localMapObject: LocalMapObject)
 }

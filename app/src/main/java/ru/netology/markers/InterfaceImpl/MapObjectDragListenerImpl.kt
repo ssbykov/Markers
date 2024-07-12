@@ -1,5 +1,6 @@
 package ru.netology.markers.InterfaceImpl
 
+import androidx.lifecycle.viewModelScope
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.MapObject
 import com.yandex.mapkit.map.MapObjectDragListener
@@ -8,14 +9,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.launch
 import ru.netology.markers.viewmodel.MapsVeiwModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
-class MapObjectDragListenerImpl (
+class MapObjectDragListenerImpl(
     private val viewModel: MapsVeiwModel
-): MapObjectDragListener {
+) : MapObjectDragListener {
 
     var point = Point()
     override fun onMapObjectDragStart(mapObject: MapObject) {}
@@ -25,15 +27,17 @@ class MapObjectDragListenerImpl (
     }
 
     override fun onMapObjectDragEnd(mapObject: MapObject) {
-        val selectedMapObject = viewModel.getById(mapObject.userData as Long)
-        if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
-            val localMapObject = selectedMapObject.copy(
-                id = selectedMapObject.id,
-                latitude = point.latitude,
-                longitude = point.longitude
-            )
-            viewModel.save(localMapObject)
-            point = Point()
+        viewModel.viewModelScope.launch {
+            val selectedMapObject = viewModel.getById(mapObject.userData as Long)
+            if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
+                val localMapObject = selectedMapObject.copy(
+                    id = selectedMapObject.id,
+                    latitude = point.latitude,
+                    longitude = point.longitude
+                )
+                viewModel.save(localMapObject)
+                point = Point()
+            }
         }
     }
 }

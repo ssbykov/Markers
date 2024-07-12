@@ -28,6 +28,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.markers.InterfaceImpl.MapObjectDragListenerImpl
+import ru.netology.markers.InterfaceImpl.MapObjectTapListenerImpl
 import ru.netology.markers.R
 import ru.netology.markers.databinding.FragmentMapsBinding
 import ru.netology.markers.databinding.MapObjectCardBinding
@@ -54,8 +55,17 @@ class MapsFragment : Fragment() {
     private val viewModel: MapsVeiwModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
-    private val mapObjectDragListener = MapObjectDragListenerImpl(viewModel)
+    private val mapObjectDragListener by lazy { MapObjectDragListenerImpl(viewModel) }
+    private val placemarkTapListener by lazy { MapObjectTapListenerImpl(viewModel, this) }
 
+    companion object {
+        private val TEXT_STYLE = TextStyle().apply {
+            placement = TextStyle.Placement.RIGHT
+        }
+
+        @JvmStatic
+        fun newInstance() = MapsFragment()
+    }
 
     @SuppressLint("MissingPermission")
     private fun getLocation() {
@@ -79,78 +89,6 @@ class MapsFragment : Fragment() {
         }
 
 
-    @SuppressLint("StringFormatMatches")
-    private val placemarkTapListener = MapObjectTapListener { mapObject, _ ->
-        viewModel.data.observe(viewLifecycleOwner) { localMapObjects ->
-            val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
-            if (selectedMapObject == null) return@observe
-            val card = MapObjectCardBinding.inflate(layoutInflater).apply {
-                name.text = requireContext().getString(R.string.title_name, selectedMapObject.name)
-                descriptin.text = requireContext().getString(
-                    R.string.card_description,
-                    selectedMapObject.description
-                )
-                point.text = requireContext().getString(
-                    R.string.location,
-                    selectedMapObject.latitude.toFloat(),
-                    selectedMapObject.longitude.toFloat()
-                )
-                root.setOnClickListener {
-                    DialogManager.dismissDialog()
-                }
-                menu.setOnClickListener {
-                    PopupMenu(it.context, it).apply {
-                        inflate(R.menu.object_list_menu)
-                        setOnMenuItemClickListener { item ->
-                            when (item.itemId) {
-                                R.id.remove -> {
-                                    viewModel.removeById(selectedMapObject.id)
-                                    DialogManager.dismissDialog()
-                                    true
-                                }
-
-                                R.id.edit -> {
-                                    viewModel.edit(selectedMapObject)
-                                    findNavController().navigate(
-                                        R.id.action_mapsFragment_to_newMapObject
-                                    )
-                                    dismiss()
-                                    true
-                                }
-
-                                else -> false
-                            }
-                        }
-                    }.show()
-                }
-            }
-            DialogManager.showDialog(requireContext(), card.root)
-        }
-        true
-    }
-
-//    private val mapObjectDragListener = object : MapObjectDragListener {
-//        var point = Point()
-//        override fun onMapObjectDragStart(mapObject: MapObject) {}
-//
-//        override fun onMapObjectDrag(mapObject: MapObject, p1: Point) {
-//            point = p1
-//        }
-//
-//        override fun onMapObjectDragEnd(mapObject: MapObject) {
-//            val selectedMapObject = viewModel.getById(mapObject.userData as Long)
-//            if (selectedMapObject != null && (point.latitude != 0.0 || point.longitude != 0.0)) {
-//                val localMapObject = selectedMapObject.copy(
-//                    id = selectedMapObject.id,
-//                    latitude = point.latitude,
-//                    longitude = point.longitude
-//                )
-//                viewModel.save(localMapObject)
-//                point = Point()
-//            }
-//        }
-//    }
-//
     val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {}
 
@@ -172,15 +110,16 @@ class MapsFragment : Fragment() {
             objects.forEach {
                 val imageProvider =
                     ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
-                val placemarkObject = map.mapObjects.addPlacemark().apply {
-                    geometry = Point(it.latitude, it.longitude)
-                    setIcon(imageProvider)
-                    setTextStyle(TEXT_STYLE)
-                    userData = it.id
-                    setText(it.name)
-                    isDraggable = true
-                    setDragListener(mapObjectDragListener)
-                }
+                val placemarkObject = map.mapObjects.addPlacemark()
+                    .apply {
+                        geometry = Point(it.latitude, it.longitude)
+                        userData = it.id
+                        isDraggable = true
+                        setIcon(imageProvider)
+                        setTextStyle(TEXT_STYLE)
+                        setText(it.name)
+                        setDragListener(mapObjectDragListener)
+                    }
 
                 placemarkObject.addTapListener(placemarkTapListener)
             }
@@ -225,16 +164,6 @@ class MapsFragment : Fragment() {
             viewModel.setCurrtntLocation(latitude, longitude, getString(R.string.last_location))
         }
         super.onStop()
-    }
-
-
-    companion object {
-        private val TEXT_STYLE = TextStyle().apply {
-            placement = TextStyle.Placement.RIGHT
-        }
-
-        @JvmStatic
-        fun newInstance() = MapsFragment()
     }
 
     private fun move(currentLocation: CurrentLocation) {
