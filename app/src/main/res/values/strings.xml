@@ -10,7 +10,7 @@
     <string name="required">Required</string>
     <string name="descriptin">Descriptin</string>
     <string name="save">Save</string>
-    <string name="location">Location: %.2f, %.2f</string>
+    <string name="location">Location: %.6f, %.6f</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="no_description">No description</string>

@@ -1,5 +1,6 @@
 package ru.netology.markers.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -41,8 +42,8 @@ class ObjectVieweHolder(
             point.text =
                 root.resources.getString(
                     R.string.location,
-                    String.format("%.6f", localMapObject.latitude),
-                    String.format("%.6f", localMapObject.longitude)
+                    localMapObject.latitude,
+                    localMapObject.longitude
                 )
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

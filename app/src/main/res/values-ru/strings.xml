@@ -17,7 +17,7 @@
     <string name="card_description">Описание: %1$s</string>
     <string name="list_objects">Список объектов</string>
     <string name="edit">Изменить</string>
-    <string name="location">Координаты: %1$s, %2$s</string>
+    <string name="location">Координаты: %.6f, %.6f</string>
     <string name="last_location">Последняя локация</string>
     <string name="current_location">Текущая локация</string>
     <string name="location_not_determined">Местоположение не определено</string>
