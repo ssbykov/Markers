@@ -67,20 +67,6 @@ class MapsFragment : Fragment() {
         fun newInstance() = MapsFragment()
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    viewModel.setCurrtntLocation(
-                        location.latitude,
-                        location.longitude,
-                        getString(R.string.current_location)
-                    )
-                }
-            }
-    }
-
     val requestPermissionLauncher =
         registerForActivityResult(RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -109,7 +95,7 @@ class MapsFragment : Fragment() {
             map.mapObjects.clear()
             objects.forEach {
                 val imageProvider =
-                    ImageProvider.fromResource(context, R.drawable.ic_dollar_pin)
+                    ImageProvider.fromResource(context, R.drawable.ic_location_40)
                 val placemarkObject = map.mapObjects.addPlacemark()
                     .apply {
                         geometry = Point(it.latitude, it.longitude)
@@ -182,6 +168,20 @@ class MapsFragment : Fragment() {
                 )
             )
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    viewModel.setCurrtntLocation(
+                        location.latitude,
+                        location.longitude,
+                        getString(R.string.current_location)
+                    )
+                }
+            }
     }
 
     private fun setLocation(): Boolean {
