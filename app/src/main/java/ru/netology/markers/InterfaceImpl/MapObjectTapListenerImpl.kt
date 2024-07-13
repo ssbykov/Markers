@@ -24,7 +24,8 @@ class MapObjectTapListenerImpl(
             val selectedMapObject = localMapObjects.find { it.id == mapObject.userData }
             if (selectedMapObject == null) return@observe
             val context = fragment.requireContext()
-            DialogManager.showDialog(context, bind(context, selectedMapObject).root)
+            val card = bind(context, selectedMapObject)
+            DialogManager.showDialog(context, card.root)
         }
         return true
 
