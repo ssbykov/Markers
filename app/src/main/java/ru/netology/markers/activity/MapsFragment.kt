@@ -90,12 +90,12 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapsBinding.inflate(inflater)
-
+        val imageProvider =
+            ImageProvider.fromResource(context, R.drawable.ic_location_40)
         viewModel.data.observe(viewLifecycleOwner) { objects ->
             map.mapObjects.clear()
             objects.forEach {
-                val imageProvider =
-                    ImageProvider.fromResource(context, R.drawable.ic_location_40)
+
                 map.mapObjects.addPlacemark()
                     .apply {
                         geometry = Point(it.latitude, it.longitude)
