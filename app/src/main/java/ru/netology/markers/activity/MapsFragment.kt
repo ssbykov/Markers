@@ -90,6 +90,15 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapsBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapView = binding.mapview
+        val mapkitVersionTextView = binding.mapkitVersion.mapkitVersionValue
+        mapkitVersionTextView.text = mapKitFactory.version
+        map = mapView.mapWindow.map
         val imageProvider =
             ImageProvider.fromResource(context, R.drawable.ic_location_40)
         viewModel.data.observe(viewLifecycleOwner) { objects ->
@@ -105,23 +114,13 @@ class MapsFragment : Fragment() {
                         setTextStyle(TEXT_STYLE)
                         setText(it.name)
                         setDragListener(mapObjectDragListener)
-                        addTapListener(placemarkTapListener)
                     }
             }
         }
+        map.mapObjects.addTapListener(placemarkTapListener)
         viewModel.currtntLocation.observe(viewLifecycleOwner) { location ->
             move(location)
         }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mapView = binding.mapview
-        val mapkitVersionTextView = binding.mapkitVersion.mapkitVersionValue
-        mapkitVersionTextView.text = mapKitFactory.version
-        map = mapView.mapWindow.map
         map.addInputListener(inputListener)
         binding.location.setOnClickListener {
             if (!setLocation()) {
