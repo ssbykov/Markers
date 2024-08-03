@@ -35,6 +35,7 @@ import ru.netology.markers.databinding.MapObjectCardBinding
 import ru.netology.markers.model.CurrentLocation
 import ru.netology.markers.utils.DialogManager
 import ru.netology.markers.utils.compareLocations
+import ru.netology.markers.utils.copy
 import ru.netology.markers.utils.showToast
 import ru.netology.markers.viewmodel.MapsVeiwModel
 import ru.netology.markers.viewmodel.empty
@@ -132,6 +133,18 @@ class MapsFragment : Fragment() {
             findNavController().navigate(R.id.action_mapsFragment_to_feedObjects)
         }
 
+        binding.zero.setOnClickListener {
+            setZeroAzimuth()
+        }
+
+        binding.closer.setOnClickListener {
+            zoom(0.5f)
+        }
+
+        binding.further.setOnClickListener {
+            zoom(-0.5f)
+        }
+
     }
 
     override fun onStart() {
@@ -164,6 +177,26 @@ class MapsFragment : Fragment() {
                     R.string.move_to_location,
                     currentLocation.name
                 )
+            )
+        }
+    }
+
+    private fun zoom(step: Float) {
+        map.apply {
+            move(
+                cameraPosition.copy(zoom = cameraPosition.zoom + step),
+                Animation(Animation.Type.SMOOTH, 0.25F),
+                null
+            )
+        }
+    }
+
+    private fun setZeroAzimuth() {
+        map.apply {
+            move(
+                cameraPosition.copy(azimuth = 0f),
+                Animation(Animation.Type.SMOOTH, 3F),
+                null
             )
         }
     }

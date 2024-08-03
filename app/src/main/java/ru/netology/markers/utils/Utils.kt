@@ -24,3 +24,16 @@ fun compareLocations(cameraPosition: CameraPosition, point: Point): Boolean {
             round(cameraPosition.target.longitude * 1000) / 1000 ==
             round(point.longitude * 1000) / 1000
 }
+
+fun CameraPosition.copy(
+    zoom: Float? = null,
+    azimuth: Float? = null,
+    tilt: Float? = null
+): CameraPosition {
+        return CameraPosition(
+            this.target,
+            if (zoom != null) zoom else this.zoom,
+            if (azimuth != null) azimuth else this.azimuth,
+            if (tilt != null) tilt else this.tilt,
+        )
+}

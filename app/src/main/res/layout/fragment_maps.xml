@@ -16,6 +16,36 @@
         layout="@layout/mapkit_version_layout" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/zero"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/move_to_location"
+        app:layout_constraintBottom_toTopOf="@id/closer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_navigation_24" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/closer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/move_to_location"
+        app:layout_constraintBottom_toTopOf="@id/further"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_closer_24" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/further"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/move_to_location"
+        app:layout_constraintBottom_toTopOf="@id/listObjects"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_further_24" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/listObjects"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
